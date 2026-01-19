@@ -14,7 +14,7 @@ function loadState() {
     return {
       chuoi_cau: "",
       phien_hien_tai: 0,
-      du_doan: "Chờ cầu",
+      du_doan: "Chờ Đủ Dữ Liệu",
       do_tin_cay: "0%"
     };
   }
@@ -97,7 +97,7 @@ function runAlgo(chuoi_cau, PATTERNS = SUNWIN_PATTERNS) {
   // Chưa đủ dữ liệu
   if (!chuoi_cau || chuoi_cau.length < 4) {
     return {
-      du_doan: "Chờ cầu",
+      du_doan: "Chờ Đủ Dữ Liệu",
       do_tin_cay: "0%"
     };
   }
