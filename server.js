@@ -80,10 +80,21 @@ async function updateData() {
   try {
     const api = await fetch(API_GOC).then(r => r.json());
 
-    if (!api || api.phien === STATE.phien_hien_tai) return;
+    // chỉ update khi có phiên mới
+    if (!api || api.phien === STATE.phien) return;
 
-    STATE.phien_hien_tai = api.phien;
+    STATE.phien = api.phien;
+    STATE.phien_hien_tai = api.phien_hien_tai;
 
+    // xúc xắc (đúng key)
+    STATE.xuc_xac1 = api.xuc_xac_1;
+    STATE.xuc_xac2 = api.xuc_xac_2;
+    STATE.xuc_xac3 = api.xuc_xac_3;
+
+    STATE.tong = api.tong;
+    STATE.ket_qua = api.ket_qua;
+
+    // cập nhật chuỗi cầu
     const kq = api.ket_qua === "Tài" ? "T" : "X";
     STATE.chuoi_cau += kq;
 
@@ -91,12 +102,14 @@ async function updateData() {
       STATE.chuoi_cau = STATE.chuoi_cau.slice(-100);
     }
 
+    // chạy thuật toán
     const algo = runAlgo(STATE.chuoi_cau);
     STATE.du_doan = algo.du_doan;
     STATE.do_tin_cay = algo.do_tin_cay;
 
     saveState(STATE);
-    console.log("✔ Update phiên:", api.phien, "|", STATE.du_doan, STATE.do_tin_cay);
+    console.log("✔ Phiên:", api.phien, api.ket_qua, STATE.du_doan, STATE.do_tin_cay);
+
   } catch (err) {
     console.error("✖ Lỗi update:", err.message);
   }
