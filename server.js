@@ -93,37 +93,61 @@ const SUNWIN_PATTERNS = {
 
 /* ================== RUN ALGO ================== */
 
-function runAlgo(cau) {
-  if (!cau || cau.length < 4) {
-    return { du_doan: "Chờ cầu", do_tin_cay: "0%" };
+function runAlgo(chuoi_cau, PATTERNS = SUNWIN_PATTERNS) {
+  // Chưa đủ dữ liệu
+  if (!chuoi_cau || chuoi_cau.length < 4) {
+    return {
+      du_doan: "Chờ cầu",
+      do_tin_cay: "0%"
+    };
   }
 
-  let best = null;
-  let bestLen = 0;
+  let bestMatch = null;
+  let bestLength = 0;
 
-  for (const p of SUNWIN_PATTERNS) {
-    const len = p.pattern.length;
-    const tail = cau.slice(-len).split("").join("");
+  // Duyệt toàn bộ thuật toán
+  for (const key in PATTERNS) {
+    for (const item of PATTERNS[key]) {
+      const patternStr = item.pattern.join("");
 
-    if (tail === p.pattern.join("")) {
-      if (!best || len > bestLen) {
-        best = p;
-        bestLen = len;
+      // So khớp đuôi chuỗi
+      if (
+        chuoi_cau.endsWith(patternStr) &&
+        patternStr.length > bestLength
+      ) {
+        bestLength = patternStr.length;
+        bestMatch = item;
       }
     }
   }
 
-  if (!best) {
-    return { du_doan: "Chờ cầu", do_tin_cay: "0%" };
+  // Không khớp cầu nào
+  if (!bestMatch) {
+    return {
+      du_doan: "Chờ cầu",
+      do_tin_cay: "0%"
+    };
   }
 
-  const last = best.pattern[best.pattern.length - 1];
-  const du_doan = last === "T" ? "Xỉu" : "Tài";
-  const percent = Math.round(best.probability * best.strength * 100);
+  /**
+   * LOGIC DỰ ĐOÁN:
+   * - Pattern kết thúc bằng T → đảo sang Xỉu
+   * - Pattern kết thúc bằng X → đảo sang Tài
+   */
+  const lastChar = bestMatch.pattern[bestMatch.pattern.length - 1];
+  const du_doan = lastChar === "T" ? "Xỉu" : "Tài";
+
+  /**
+   * ĐỘ TIN CẬY:
+   * probability × strength × 100
+   */
+  const confidence = Math.round(
+    bestMatch.probability * bestMatch.strength * 100
+  );
 
   return {
     du_doan,
-    do_tin_cay: percent + "%"
+    do_tin_cay: `${confidence}%`
   };
 }
 
