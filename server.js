@@ -124,7 +124,7 @@ function runAlgo(chuoi_cau, PATTERNS = SUNWIN_PATTERNS) {
   // Không khớp cầu nào
   if (!bestMatch) {
     return {
-      du_doan: "Chờ cầu",
+      du_doan: "Chờ Đủ Dữ Liệu",
       do_tin_cay: "0%"
     };
   }
